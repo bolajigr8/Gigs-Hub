@@ -33,6 +33,7 @@ const Companies = ({ jobsList }: any) => {
 
     router.push('/jobs')
   }
+
   return (
     <section className='mx-auto max-w-7xl'>
       <header className='flex items-baseline justify-between border-b pb-6 pt-24'>
@@ -47,9 +48,10 @@ const Companies = ({ jobsList }: any) => {
               {/* new one  */}
               <div className='grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3'>
                 {createNewSetOfCompanies &&
-                createNewSetOfCompanies.length >= 0 ? (
-                  createNewSetOfCompanies.map((companyName) => (
+                createNewSetOfCompanies.length > 0 ? (
+                  createNewSetOfCompanies.map((companyName, index) => (
                     <CommonCard
+                      key={index}
                       icon={<JobIcon width={120} height={120} />}
                       title={companyName}
                       footerContent={

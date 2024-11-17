@@ -1,5 +1,8 @@
 'use server'
 
+// Load environment variables
+// require('dotenv').config()
+
 import connect from '@/lib/database'
 import Application from '@/models/application'
 import Job from '@/models/job'
@@ -8,9 +11,10 @@ import { revalidatePath } from 'next/cache'
 import { FilterParamsAction } from '@/types'
 import Feed from '@/models/feed'
 
-const stripe = require('stripe')(
-  'sk_test_51QIha6GINIrp0oKlc07fPRo0AnzDSgLfKLlqVPdkQzEH6lXuLXfAMipnQTJq1SfFg6pEpFnwupdRjsQ7AmDGTkVs00O3hzpgIP'
-)
+// Access Stripe with the secret key from environment variables
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+
+console.log(process.env.STRIPE_SECRET_KEY)
 
 // create profile
 export async function createProfileAction(
@@ -313,8 +317,8 @@ export async function createStripePaymentAction(data: any) {
     payment_method_types: ['card'],
     line_items: data?.lineItems,
     mode: 'subscription',
-    success_url: `http://localhost:3000/membership` + '?status=success',
-    cancel_url: `http://localhost:3000/membership` + '?status=cancel',
+    success_url: `${process.env.URL}/membership` + '?status=success',
+    cancel_url: `${process.env.URL}/membership` + '?status=cancel',
   })
 
   return {

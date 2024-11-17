@@ -24,12 +24,10 @@ export default function RootLayout({
       <html lang='en'>
         <body className={inter.className}>
           <Suspense fallback={<Loading />}>
-            <CommonLayout
-              attribute='class'
-              defaultTheme='system'
-              children={children}
-            />
-            {/* to use toast we must put this here */}
+            <CommonLayout attribute='class' defaultTheme='system'>
+              {children} {/* Properly nest children */}
+            </CommonLayout>
+            {/* To use toast, we must put this here */}
           </Suspense>
           <Toaster />
         </body>

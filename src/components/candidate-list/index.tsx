@@ -34,8 +34,6 @@ const CandidateList = ({
     }
   }
 
-  // handlePreviewResume
-
   // supabase client for handlePreviewResume
   const supabaseClient = createClient(
     'https://hgmzxgxgjncrnbgtljwl.supabase.co',
@@ -46,10 +44,6 @@ const CandidateList = ({
   async function handlePreviewResume() {
     try {
       const resumePath = currentCandidateDetails?.candidateInfo?.resume
-
-      // Log resume path to debug issues
-      // console.log('candidateinfo:', currentCandidateDetails?.candidateInfo)
-      // console.log('Resume path:', resumePath)
 
       if (!resumePath) {
         console.error('No resume path found.')
@@ -70,20 +64,18 @@ const CandidateList = ({
         return
       }
 
-      // Extract file name from the resume path (e.g., 'folder/file.pdf')
       const fileName = resumePath.split('/').pop() || 'Resume.pdf'
 
       // Create an anchor element for downloading the resume
       const a = document.createElement('a')
       a.href = data.publicUrl
-      a.setAttribute('download', fileName) // Use the dynamic file name
+      a.setAttribute('download', fileName)
       a.setAttribute('target', '_blank')
 
       // Append the anchor to the document and trigger the download
       document.body.appendChild(a)
       a.click()
 
-      // Remove the anchor after triggering the download
       document.body.removeChild(a)
     } catch (err) {
       console.error('Error in handlePreviewResume:', err)
@@ -91,20 +83,15 @@ const CandidateList = ({
   }
 
   // handleUpdateJobstatus function
-
   async function handleUpdateJobstatus(getCurrentJobstaus: any) {
-    // get all the applicants
     let copyJobyApplicants = [...jobApplications]
 
-    // from the lists of applicants pick the one that we are in now and assign a number
     const indexOfJobApplicant = copyJobyApplicants.findIndex(
       (item: any) => item.candidateUserId === currentCandidateDetails?.userId
     )
 
-    // select by number the applicant and update the following info
     const jobAplicantToUpdate = {
       ...copyJobyApplicants[indexOfJobApplicant],
-      // here
       status:
         copyJobyApplicants[indexOfJobApplicant].status.concat(
           getCurrentJobstaus
@@ -115,12 +102,20 @@ const CandidateList = ({
 
   return (
     <Fragment>
-      <div className='grid grid-cols-1 gap-3 p-10 md:grid-cols-2 lg:grid-cols-3  '>
+      <div className='grid grid-cols-1 gap-3 p-10 md:grid-cols-2 lg:grid-cols-3'>
         {jobApplications && jobApplications.length > 0
           ? jobApplications.map(
-              (jobApplicantItem: { name: string; candidateUserId: string }) => (
-                <div className='bg-white shadow-lg w-full max-w-sm rounded-lg overflow-hidden mx-auto mt-4'>
-                  <div className='px-4 my-6 flex justify-between items-center '>
+              (
+                jobApplicantItem: { name: string; candidateUserId: string },
+                index: number // Added key here
+              ) => (
+                <div
+                  key={index}
+                  className='bg-white shadow-lg w-full max-w-sm rounded-lg overflow-hidden mx-auto mt-4'
+                >
+                  {' '}
+                  {/* Added key here */}
+                  <div className='px-4 my-6 flex justify-between items-center'>
                     <h3 className='dark:text-gray-950 text-lg font-bold'>
                       {jobApplicantItem?.name}
                     </h3>
@@ -191,13 +186,23 @@ const CandidateList = ({
               <div className='flex gap-2 flex-wrap mt-2'>
                 {currentCandidateDetails?.candidateInfo?.previousCompany
                   .split(',')
-                  .map((item: string) => (
-                    <div className='w-28 flex justify-center items-center  h-8 bg-gray-800 rounded-md'>
-                      <h2 className='text-sm font-medium text-white capitalize'>
-                        {item}
-                      </h2>
-                    </div>
-                  ))}
+                  .map(
+                    (
+                      item: string,
+                      index: number // Added key here
+                    ) => (
+                      <div
+                        key={index}
+                        className='w-28 flex justify-center items-center  h-8 bg-gray-800 rounded-md'
+                      >
+                        {' '}
+                        {/* Added key here */}
+                        <h2 className='text-sm font-medium text-white capitalize'>
+                          {item}
+                        </h2>
+                      </div>
+                    )
+                  )}
               </div>
             </div>
 
@@ -212,16 +217,21 @@ const CandidateList = ({
                   ?.replace(/\s+/g, ',')
                   ?.split(',')
                   ?.filter((item: string) => item)
-                  ?.map((item: string, index: number) => (
-                    <div
-                      key={index}
-                      className='w-24 flex justify-center items-center h-8 bg-blue-600 rounded-md'
-                    >
-                      <h2 className='text-sm font-medium text-white capitalize'>
-                        {item.trim()}
-                      </h2>
-                    </div>
-                  ))}
+                  ?.map(
+                    (
+                      item: string,
+                      index: number // Added key here
+                    ) => (
+                      <div
+                        key={index} // Added key here
+                        className='w-24 flex justify-center items-center h-8 bg-blue-600 rounded-md'
+                      >
+                        <h2 className='text-sm font-medium text-white capitalize'>
+                          {item.trim()}
+                        </h2>
+                      </div>
+                    )
+                  )}
               </div>
             </div>
 
@@ -250,21 +260,14 @@ const CandidateList = ({
                       (item: any) =>
                         item.candidateUserId === currentCandidateDetails?.userId
                     )
-                    ?.status.includes('rejected')
+                    ?.status.includes('not selected')
                 }
               >
-                {jobApplications
-                  .find(
-                    (item: any) =>
-                      item.candidateUserId === currentCandidateDetails?.userId
-                  )
-                  ?.status.includes('selected')
-                  ? 'Selected'
-                  : 'Select'}
+                Select
               </Button>
-              {/* Rejected Button */}
+              {/* Reject Button */}
               <Button
-                onClick={() => handleUpdateJobstatus('rejected')}
+                onClick={() => handleUpdateJobstatus('not selected')}
                 className={`flex h-11 items-center justify-center px-5 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-sm disabled:opacity-65`}
                 disabled={
                   jobApplications
@@ -272,23 +275,16 @@ const CandidateList = ({
                       (item: any) =>
                         item.candidateUserId === currentCandidateDetails?.userId
                     )
-                    ?.status.includes('selected') ||
+                    ?.status.includes('not selected') ||
                   jobApplications
                     .find(
                       (item: any) =>
                         item.candidateUserId === currentCandidateDetails?.userId
                     )
-                    ?.status.includes('rejected')
+                    ?.status.includes('selected')
                 }
               >
-                {jobApplications
-                  .find(
-                    (item: any) =>
-                      item.candidateUserId === currentCandidateDetails?.userId
-                  )
-                  ?.status.includes('rejected')
-                  ? 'Rejected'
-                  : 'Reject'}
+                Reject
               </Button>
             </div>
           </div>
